@@ -45,7 +45,7 @@ _SOURCES = {
         '[application]\nname = "catalog-api"\nworkers = 4\n',
     ),
     "holdout-owners": (
-        "data/owners.json",
+        "reference/owners.json",
         '{"catalog": ["alice", "bob"], "gateway": ["carol"]}\n',
     ),
     "holdout-comment": (
