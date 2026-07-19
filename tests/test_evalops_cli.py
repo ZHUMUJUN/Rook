@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 
 import pytest
@@ -25,7 +26,6 @@ from rook_agent.evalops.models import (
     PromotionStatus,
     SkillBundle,
     Treatment,
-    TreatmentFamily,
 )
 from rook_agent.evalops.registry import PromotionRegistry
 from rook_agent.evalops.release import SkillReleaseService, normalizer_fingerprint
@@ -52,6 +52,7 @@ from rook_agent.evalops.suites import load_eval_suite
             "run",
         ),
         (["eval", "report", "evaluation-1"], "eval", "report"),
+        (["eval", "trends", "safe-skill", "--agent", "codex"], "eval", "trends"),
         (["skill", "status", "safe-skill"], "skill", "status"),
         (
             [
@@ -305,6 +306,77 @@ def _dependencies(tmp_path: Path, adapters: dict[AgentType, object]) -> EvalOpsC
             registry=registry,
         ),
     )
+
+
+def test_eval_trends_json_includes_bounded_evidence_and_governance(
+    tmp_path: Path, capsys
+) -> None:
+    deps = _dependencies(tmp_path, {})
+    evaluation_id = f"evaluation-{'a' * 32}"
+    report = deps.artifact_store.root / "reports" / evaluation_id / "scorecard.json"
+    report.parent.mkdir(parents=True)
+    report.write_text(
+        json.dumps(
+            {
+                "evaluation_id": evaluation_id,
+                "candidate": {
+                    "name": "safe-skill",
+                    "version": 1,
+                    "content_hash": "b" * 64,
+                },
+                "suite_id": "suite",
+                "suite_fingerprint": "suite-fingerprint",
+                "policy_fingerprint": "policy-fingerprint",
+                "targets": [
+                    {
+                        "agent_type": "codex",
+                        "target_fingerprint": "target-fingerprint",
+                        "target": {"model": "gpt-test", "version": "1"},
+                        "decision": {
+                            "status": "promoted",
+                            "reason_code": "capability_success_uplift",
+                            "created_at": "2026-07-19T00:00:00Z",
+                        },
+                        "metrics": {
+                            "candidate_success_rate": 1.0,
+                            "paired_success_improvement": 0.75,
+                            "infra_exclusion_rate": 0.0,
+                            "trace_completeness_rate": 1.0,
+                            "new_regression_count": 0,
+                            "safety_failure_count": 0,
+                            "secret_leak_count": 0,
+                        },
+                    }
+                ],
+            }
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    args = build_parser().parse_args(
+        [
+            "--project",
+            str(tmp_path),
+            "eval",
+            "trends",
+            "safe-skill",
+            "--agent",
+            "codex",
+            "--json",
+        ]
+    )
+
+    assert run_evalops_command(args, dependencies=deps) == 0
+    output = json.loads(capsys.readouterr().out)
+    assert output["entry_count"] == 1
+    assert output["entries"][0]["evaluation_id"] == evaluation_id
+    assert output["governance"] == {
+        "approval_count": 0,
+        "decision_count": 0,
+        "failed_release_count": 0,
+        "release_count": 0,
+        "rollback_count": 0,
+    }
 
 
 def test_codex_eval_requires_both_external_and_cost_authorization(tmp_path: Path) -> None:
