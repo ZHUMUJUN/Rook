@@ -338,3 +338,42 @@ def test_trends_count_untrusted_report_schema_failures(tmp_path: Path) -> None:
 
     assert summary["entries"] == ()
     assert summary["diagnostics"] == {"malformed_report_count": len(payloads)}
+
+
+def test_trends_reject_oversized_and_invalid_scalar_reports(tmp_path: Path) -> None:
+    artifacts = tmp_path / "artifacts"
+    reports = artifacts / "reports"
+    oversized = reports / f"evaluation-{'5' * 32}" / "scorecard.json"
+    oversized.parent.mkdir(parents=True)
+    oversized.write_bytes(b" " * (4 * 1024 * 1024 + 1))
+
+    for suffix, mutate in (
+        ("6", lambda payload: payload["targets"][0]["decision"].update(reason_code="")),
+        (
+            "7",
+            lambda payload: payload["targets"][0]["metrics"].update(
+                candidate_success_rate=True
+            ),
+        ),
+    ):
+        _write_report(
+            artifacts,
+            suffix=suffix,
+            created_at="2026-01-09T00:00:00Z",
+            candidate_version=9,
+            candidate_success=1.0,
+        )
+        report = reports / f"evaluation-{suffix * 32}" / "scorecard.json"
+        payload = json.loads(report.read_text(encoding="utf-8"))
+        mutate(payload)
+        report.write_text(json.dumps(payload) + "\n", encoding="utf-8")
+
+    summary = build_trend_summary(
+        artifacts,
+        skill_name="safe-skill",
+        agent_type="codex",
+        limit=10,
+    )
+
+    assert summary["entries"] == ()
+    assert summary["diagnostics"] == {"malformed_report_count": 3}

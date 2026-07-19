@@ -81,7 +81,7 @@ Rook 是一个可真实运行的本地 Python Coding Agent；Rook Forge 是内�
 
 ## 当前验证结果
 
-- 当前 EvalOps 离线覆盖率门禁：`448 passed, 7 skipped`，总覆盖率 `85.03%`。
+- 当前 EvalOps 离线覆盖率门禁：`461 passed, 7 skipped`，总覆盖率 `85.84%`；新增边界测试使 Ubuntu 也能独立满足 85% 门槛。
 - 当前本地完整核心离线基线（排除可选 `evalplus` benchmark）：`1708 passed, 10 skipped`，用时 `382.86s`；运行时显式关闭外部评测和模型费用。
 - Ruff 全仓关键规则、mypy 核心 EvalOps 边界和 pip-audit 均通过；pip-audit 未发现已知第三方依赖漏洞，本地未发布包按预期标记为不可从 PyPI 审计。
 - `rook-agent 0.2.1` wheel/sdist 已实际构建；wheel 在全新临时虚拟环境中完成安装、版本导入、`rook --help` 和 `rook eval demo`，双目标部署/替换/回滚全链路通过。
