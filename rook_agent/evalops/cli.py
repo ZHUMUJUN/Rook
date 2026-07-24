@@ -290,6 +290,7 @@ def _run_evaluation(args: argparse.Namespace, deps: EvalOpsCliDependencies) -> i
         mode=EvaluationMode(args.phase),
         record_decisions=not args.measurement_only,
         environment_allowlist=environment_allowlist,
+        stop_on_infrastructure_exclusion=args.stop_on_infrastructure_exclusion,
     )
     print(f"evaluation: {summary.evaluation_id}")
     print(f"report: {summary.report_markdown_ref or 'not available'}")
@@ -312,6 +313,14 @@ def _run_evaluation(args: argparse.Namespace, deps: EvalOpsCliDependencies) -> i
                 if args.measurement_only
                 else "  Gate passed, awaiting approval"
             )
+    stopped_for_infrastructure = any(
+        record is not None and record.stop_reason == "infrastructure_exclusion"
+        for item in summary.targets
+        for record in (item.fast_record, item.full_record)
+    )
+    if stopped_for_infrastructure:
+        print("stopped: first infrastructure exclusion")
+        return 2
     return 0
 
 

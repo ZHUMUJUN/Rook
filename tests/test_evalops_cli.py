@@ -167,6 +167,7 @@ def test_eval_run_parses_bounded_experiment_controls() -> None:
             "--fast-count-per-category",
             "2",
             "--measurement-only",
+            "--stop-on-infrastructure-exclusion",
         ]
     )
 
@@ -174,6 +175,7 @@ def test_eval_run_parses_bounded_experiment_controls() -> None:
     assert args.phase == "full"
     assert args.fast_count_per_category == 2
     assert args.measurement_only is True
+    assert args.stop_on_infrastructure_exclusion is True
 
 
 def test_proxy_environment_keeps_only_explicit_proxy_keys() -> None:
