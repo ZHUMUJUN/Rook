@@ -50,7 +50,8 @@ and trace-derived quarantined candidates.
 | Invalidated Adapter v10 remediation | `codex --version` did not fully load configuration; the nested login-shell override was not admissible evidence |
 | Aborted Adapter v10 readiness | Baseline failed config parsing before provider initialization; empty JSONL, 0 model requests, Forced arm not started |
 | Adapter v11 profile isolation | Top-level `allow_login_shell=false`; full no-model config load passes while the invalid nested-path control fails |
-| Remaining live schedule | A fresh, separately authorized Adapter v11 two-call readiness, then a separately authorized fresh 72-call Formal |
+| Adapter v11 readiness smoke | 2/2 processes exited 0 on the prior docs failure boundary; 100% trace completeness; 0 infrastructure exclusions or profile, Web Search, reconnect, and WebSocket markers |
+| Remaining live schedule | A separately authorized fresh 72-call Formal |
 | External calls in the control | None |
 
 Reproduce the control evidence:

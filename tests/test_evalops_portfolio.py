@@ -237,6 +237,38 @@ def test_public_v11_profile_remediation_is_offline_and_requires_fresh_smoke() ->
     assert evidence["next_gate"]["formal_authorized"] is False
 
 
+def test_public_v11_readiness_is_exactly_two_calls_and_not_formal() -> None:
+    evidence = json.loads(
+        (
+            _ROOT
+            / "docs"
+            / "evidence"
+            / "rm2-v11-smoke-2026-07-26.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert evidence["authorization"]["external_calls_authorized"] == 2
+    assert evidence["authorization"]["external_calls_started"] == 2
+    assert evidence["authorization"]["formal_authorized"] is False
+    assert evidence["identity"]["adapter_version"] == "codex-evalops-v11"
+    assert evidence["execution"]["planned_runs"] == 2
+    assert evidence["execution"]["completed_runs"] == 2
+    assert evidence["execution"]["stop_reason"] is None
+    assert evidence["audit"]["infrastructure_exclusions"] == 0
+    assert evidence["audit"]["powershell_profile_markers"] == 0
+    assert evidence["audit"]["trace_completeness_rate"] == 1.0
+    assert evidence["audit"]["web_search_event_count"] == 0
+    assert evidence["result"]["readiness_passed"] is True
+    assert evidence["result"]["formal_metric_produced"] is False
+    assert evidence["result"]["resume_metric_produced"] is False
+    assert {run["status"] for run in evidence["runs"]} == {
+        "wrong_result",
+        "passed",
+    }
+    assert all(run["process_exit_code"] == 0 for run in evidence["runs"])
+    assert all(run["terminal_event_count"] == 1 for run in evidence["runs"])
+
+
 def test_public_forge_lifecycle_evidence_preserves_fake_agent_boundary() -> None:
     evidence = json.loads(
         (

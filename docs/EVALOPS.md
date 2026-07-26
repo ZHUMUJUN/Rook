@@ -485,9 +485,17 @@ validation before reporting Codex available. Evidence is recorded in
 and
 [`rm2-formal-v10-profile-isolation-remediation-2026-07-26.json`](evidence/rm2-formal-v10-profile-isolation-remediation-2026-07-26.json).
 
-Adapter v11 now requires a fresh, separately authorized two-call readiness on
-`profile-isolation-smoke.toml`. Passing it still does not authorize Formal. A
-new 72-call Formal must be authorized separately and start from call 1.
+The separately authorized Adapter v11 run then completed both arms in
+`profile-isolation-smoke.toml`. Both processes exited 0, each emitted one
+terminal turn, trace completeness was 100%, and infrastructure exclusions plus
+PowerShell profile, Web Search, reconnect, WebSocket, and Windows sandbox
+failure markers were all zero. Baseline was `wrong_result`; Forced Skill
+passed. The gate remained `quarantined (insufficient_valid_pairs)` because this
+single pair is readiness evidence, not an effect estimate. See
+[`rm2-v11-smoke-2026-07-26.json`](evidence/rm2-v11-smoke-2026-07-26.json).
+
+Passing readiness does not authorize Formal. A new 72-call Formal must be
+authorized separately and start from call 1.
 
 Calibration, Pilot, and Formal stages require separate authorizations for 12,
 24, and 72 calls. Do not infer one stage's authorization from another. Only the
