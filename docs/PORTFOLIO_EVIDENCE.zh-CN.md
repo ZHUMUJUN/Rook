@@ -34,7 +34,9 @@
 | Adapter v8 Formal 已中止 | 启动 13 次；一个 Forced arm 在写入后验证断言失败并耗尽 fallback；59 次未启动；没有 Formal 结果 |
 | Adapter v9 写入后验证修复 | 必需写入与辅助验证分离；确定性 evaluator 保留最终判定权；105 个专项离线测试通过 |
 | Adapter v9 readiness smoke | 之前失败的 application case 上 2/2 次终态 turn；轨迹完整度 100%；基础设施排除 0；readiness 通过 |
-| 剩余真实调用计划 | 单独授权全新的 72-call Formal |
+| Adapter v9 Formal 已中止 | 启动 39 次；第 39 次加载真实 PowerShell profile 后在受限 language mode 失败；fail-fast 在第 40 次前停止；部分 ScoreCard 不作为 Formal |
+| Adapter v10 profile 隔离 | 强制 `permissions.allow_login_shell=false`，Codex PowerShell 使用 `-NoProfile` 且拒绝显式 login shell；零模型调用离线验证通过 |
+| 剩余真实调用计划 | 单独授权 Adapter v10 的 2-call readiness；通过后再单独授权全新的 72-call Formal |
 | 控制实验外部调用 | 0 |
 
 复现控制实验：

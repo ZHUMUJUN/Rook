@@ -19,6 +19,8 @@ effect estimate.
 | Adapter v8 smoke | Exactly 2/2 calls completed, with no infrastructure exclusion or deadline-overrun marker. | Host deadline boundary considered ready. | Readiness only. |
 | Adapter v8 Formal | One Forced arm wrote the required file, then an auxiliary assertion failed and was classified as fallback exhaustion. Thirteen calls started; 59 were not started. | Adapter v9 separates required mutation from auxiliary verification; a completed write reaches the hidden deterministic evaluator. | Stopped; no Formal metric. |
 | Adapter v9 smoke | The previously failing application case completed exactly 2/2 terminal calls, with 100% trace completeness and zero infrastructure exclusions. | No further Adapter change required by readiness. | Readiness passed; one pair remains below effect-policy sample size. |
+| Adapter v9 Formal | The first 38 calls formed 19 complete pairs. Call 39 loaded the real PowerShell profile inside the restricted Windows sandbox; the profile failed under its language mode and the process exited without an admissible terminal result. | Adapter v10 sets `permissions.allow_login_shell=false`, which makes Codex invoke PowerShell with `-NoProfile` and reject explicit login-shell requests. | Fail-fast stopped before call 40; 33 calls were not started; the partial ScoreCard is not a Formal metric. |
+| Adapter v10 offline remediation | Codex 0.144.6 accepted the login-shell override, and focused Adapter/CLI/Runner tests verified the immutable command and new target identity. | Require a separately authorized two-call readiness on the previously failing `holdout-docs` pair. | Offline only; no model call and no readiness claim. |
 
 ## Evidence index
 
@@ -36,11 +38,13 @@ effect estimate.
 - [Adapter v8 Formal attempt](../evidence/rm2-formal-v8-attempt-2026-07-22.json)
 - [Post-write remediation](../evidence/rm2-formal-v8-post-write-remediation-2026-07-22.json)
 - [Adapter v9 smoke](../evidence/rm2-v9-smoke-2026-07-24.json)
+- [Adapter v9 Formal attempt](../evidence/rm2-formal-v9-attempt-2026-07-24.json)
+- [PowerShell profile isolation remediation](../evidence/rm2-formal-v9-profile-isolation-remediation-2026-07-26.json)
 
 ## Current boundary
 
-Adapter v9 is transport/execution ready on the two-call gate. It has not
-produced a 72-call Formal report. The valid 24-call Pilot remains useful
-engineering evidence, but final resume success-rate, latency, and Token claims
-remain unfilled until a separately authorized Formal run completes without an
-infrastructure exclusion.
+Adapter v10 has an offline-verified PowerShell profile-isolation boundary but
+has not passed its two-call live readiness gate. The valid 24-call Pilot remains
+useful engineering evidence, but final resume success-rate, latency, and Token
+claims remain unfilled until a separately authorized readiness and a separate,
+fresh 72-call Formal both complete without an infrastructure exclusion.

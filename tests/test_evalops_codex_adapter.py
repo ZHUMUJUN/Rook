@@ -308,6 +308,8 @@ def test_codex_prepare_builds_safe_exact_exec_command_and_stdin(tmp_path: Path) 
         "-c",
         "sandbox_workspace_write.network_access=false",
         "-c",
+        "permissions.allow_login_shell=false",
+        "-c",
         "sandbox_workspace_write.exclude_tmpdir_env_var=true",
         "--sandbox",
         "workspace-write",
@@ -355,6 +357,27 @@ def test_codex_prepare_builds_safe_exact_exec_command_and_stdin(tmp_path: Path) 
     assert "--dangerously-bypass-approvals-and-sandbox" not in prepared.command
     assert prepared.metadata["environment_keys"] == tuple(sorted(prepared.environment))
     assert "must-not-inherit" not in repr(prepared.metadata)
+
+
+def test_codex_command_disables_login_shell_profiles_for_every_platform(
+    tmp_path: Path,
+) -> None:
+    workspace = tmp_path / "workspace-no-login-profile"
+    workspace.mkdir()
+
+    windows = _adapter(
+        tmp_path,
+        ScriptedProcessRunner(),
+        platform_name="win32",
+    ).prepare(_spec(tmp_path), workspace)
+    posix = _adapter(
+        tmp_path,
+        ScriptedProcessRunner(),
+        platform_name="linux",
+    ).prepare(_spec(tmp_path), workspace)
+
+    assert "permissions.allow_login_shell=false" in windows.command
+    assert "permissions.allow_login_shell=false" in posix.command
 
 
 def test_codex_command_forces_http_transport_without_changing_auth_endpoint(

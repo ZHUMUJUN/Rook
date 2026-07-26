@@ -141,6 +141,55 @@ def test_public_v9_readiness_evidence_is_exactly_two_calls_and_not_formal() -> N
     assert "authorization" in serialized
 
 
+def test_public_v9_formal_attempt_stopped_fail_closed_and_is_not_formal() -> None:
+    evidence = json.loads(
+        (
+            _ROOT
+            / "docs"
+            / "evidence"
+            / "rm2-formal-v9-attempt-2026-07-24.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert evidence["authorization"]["formal_calls_authorized"] == 72
+    assert evidence["authorization"]["formal_calls_started"] == 39
+    assert evidence["authorization"]["not_started"] == 33
+    assert evidence["execution"]["planned_runs"] == 72
+    assert evidence["execution"]["evaluated_run_records"] == 39
+    assert evidence["execution"]["stop_reason"] == "infrastructure_exclusion"
+    assert evidence["evaluated_status_counts"]["infra_error"] == 1
+    assert evidence["failure"]["classification"] == (
+        "login_profile_loaded_in_restricted_powershell"
+    )
+    assert evidence["stop_boundary"]["status"] == "aborted_fail_closed"
+    assert evidence["stop_boundary"]["partial_results_may_be_combined_with_future_runs"] is False
+    assert evidence["result"]["formal_metric_produced"] is False
+    assert evidence["result"]["resume_metric_produced"] is False
+
+
+def test_public_v10_profile_remediation_is_offline_and_requires_new_smoke() -> None:
+    evidence = json.loads(
+        (
+            _ROOT
+            / "docs"
+            / "evidence"
+            / "rm2-formal-v9-profile-isolation-remediation-2026-07-26.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert evidence["identity"]["adapter_version"] == "codex-evalops-v10"
+    assert evidence["contract"]["codex_config_override"] == (
+        "permissions.allow_login_shell=false"
+    )
+    assert evidence["contract"]["powershell_non_login_flag"] == "-NoProfile"
+    assert evidence["contract"]["user_profile_files_modified"] is False
+    assert evidence["verification"]["external_calls"] == 0
+    assert evidence["verification"]["model_costs_incurred"] is False
+    assert evidence["next_gate"]["calls"] == 2
+    assert evidence["next_gate"]["authorization_required"] is True
+    assert evidence["next_gate"]["formal_authorized"] is False
+
+
 def test_public_forge_lifecycle_evidence_preserves_fake_agent_boundary() -> None:
     evidence = json.loads(
         (

@@ -597,6 +597,8 @@ def _command(
             'web_search="disabled"',
             "-c",
             "sandbox_workspace_write.network_access=false",
+            "-c",
+            "permissions.allow_login_shell=false",
         )
     )
     if not include_skill_instructions:
