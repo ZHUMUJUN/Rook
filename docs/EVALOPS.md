@@ -494,14 +494,22 @@ passed. The gate remained `quarantined (insufficient_valid_pairs)` because this
 single pair is readiness evidence, not an effect estimate. See
 [`rm2-v11-smoke-2026-07-26.json`](evidence/rm2-v11-smoke-2026-07-26.json).
 
-Passing readiness does not authorize Formal. A new 72-call Formal must be
-authorized separately and start from call 1.
+Passing readiness did not authorize Formal. After a new, separate authorization,
+Adapter v11 started from call 1 and completed all 72 processes and 36 pairs.
+Baseline success was 25% and Forced Skill success was 100% (+75pp); median
+latency improved 16.7%, median observed Token use improved 19.5%, and all 18
+preservation pairs passed with zero new regressions. Trace completeness was
+100%, all processes exited 0, and no infrastructure exclusion occurred. The
+automatic gate returned `promoted (capability_success_uplift)`. Because the run
+was measurement-only, it did not record human approval or deploy the Skill.
+USD cost and Codex routing remain not observed. See
+[`rm2-formal-v11-summary-2026-07-26.json`](evidence/rm2-formal-v11-summary-2026-07-26.json).
 
 Calibration, Pilot, and Formal stages require separate authorizations for 12,
 24, and 72 calls. Do not infer one stage's authorization from another. Only the
-72-call Formal immutable report may populate final resume success, Token, and
-latency values; USD cost remains `not observed` unless the Adapter receives a
-real cost field.
+72-call Formal immutable report now populates final resume success, Token, and
+latency values; USD cost remains `not observed` because the Adapter received no
+cost field.
 
 The repository-level Codex target and network controls follow the official
 [Codex Skill documentation](https://learn.chatgpt.com/docs/build-skills) and

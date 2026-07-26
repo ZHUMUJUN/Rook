@@ -57,10 +57,10 @@ def test_portfolio_docs_keep_fake_controls_separate_from_live_metrics() -> None:
 
     assert "Fake Agent promotion/rejection results" in english
     assert "Completed Calibration (not a Formal result)" in english
-    assert "Formal not measured" in english
+    assert "Completed Adapter v11 Formal" in english
     assert "不能作为真实模型效果" in chinese
     assert "已完成的 Calibration（不能作为 Formal 结论）" in chinese
-    assert "Formal 未测量" in chinese
+    assert "已完成的 Adapter v11 Formal" in chinese
 
 
 def test_public_pilot_evidence_is_redacted_bounded_and_not_formal() -> None:
@@ -96,11 +96,13 @@ def test_readme_leads_with_portfolio_story_and_embeds_published_assets() -> None
         top.index(heading)
         for heading in ("## Problem", "## Architecture", "## Demo", "## Metrics")
     )
-    assert "72-call Formal | **Not measured**" in top
+    assert "`gpt-5.4-mini` 72-call Formal" in top
+    assert "Baseline 25% → Forced 100% (+75pp)" in top
     assert "Formal hardening timeline" in top
     assert "2–3 minute video" in top
     assert "## 问题" in chinese
-    assert "72-call Formal | **尚未测量**" in chinese
+    assert "`gpt-5.4-mini` 72-call Formal" in chinese
+    assert "Baseline 25% → Forced 100%（+75pp）" in chinese
 
     video = _ROOT / "docs" / "video" / "rook-forge-demo.mp4"
     thumbnail = _ROOT / "docs" / "images" / "rook-forge-video.png"
@@ -267,6 +269,43 @@ def test_public_v11_readiness_is_exactly_two_calls_and_not_formal() -> None:
     }
     assert all(run["process_exit_code"] == 0 for run in evidence["runs"])
     assert all(run["terminal_event_count"] == 1 for run in evidence["runs"])
+
+
+def test_public_v11_formal_is_complete_promoted_and_resume_eligible() -> None:
+    evidence = json.loads(
+        (
+            _ROOT
+            / "docs"
+            / "evidence"
+            / "rm2-formal-v11-summary-2026-07-26.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert evidence["authorization"]["formal_calls_authorized"] == 72
+    assert evidence["authorization"]["formal_calls_started"] == 72
+    assert evidence["authorization"]["formal_calls_completed"] == 72
+    assert evidence["identity"]["adapter_version"] == "codex-evalops-v11"
+    assert evidence["execution"]["planned_run_count"] == 72
+    assert evidence["execution"]["completed_run_count"] == 72
+    assert evidence["execution"]["content_pair_count"] == 36
+    assert evidence["execution"]["stop_reason"] is None
+    assert evidence["audit"]["infrastructure_exclusions"] == 0
+    assert evidence["audit"]["trace_completeness_rate"] == 1.0
+    assert evidence["audit"]["process_exit_zero"] == 72
+    assert evidence["audit"]["powershell_profile_markers"] == 0
+    assert evidence["metrics"]["overall"]["baseline_success_rate"] == 0.25
+    assert evidence["metrics"]["overall"]["candidate_success_rate"] == 1.0
+    assert evidence["metrics"]["overall"]["paired_success_uplift"] == 0.75
+    assert evidence["metrics"]["capability"]["paired_success_uplift"] == 1.0
+    assert evidence["metrics"]["preservation"]["new_regression_count"] == 0
+    assert evidence["metrics"]["cost"]["observed"] is False
+    assert evidence["metrics"]["routing"]["observed"] is False
+    assert evidence["gate"]["status"] == "promoted"
+    assert evidence["gate"]["reason_code"] == "capability_success_uplift"
+    assert evidence["result"]["formal_metric_produced"] is True
+    assert evidence["result"]["resume_metric_produced"] is True
+    assert evidence["result"]["deployment_performed"] is False
+    assert evidence["result"]["human_approval_recorded"] is False
 
 
 def test_public_forge_lifecycle_evidence_preserves_fake_agent_boundary() -> None:

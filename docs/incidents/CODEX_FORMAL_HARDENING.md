@@ -24,6 +24,7 @@ effect estimate.
 | Adapter v10 smoke | The Baseline CLI process rejected the nested override before provider initialization; its JSONL was empty and no model request started. | Adapter v11 uses the top-level `allow_login_shell=false` field accepted by Codex 0.144.6. | Fail-fast stopped after 1/2 planned arms; the Forced arm was not started; no readiness or Formal metric. |
 | Adapter v11 offline remediation | The invalid nested path fails `features list`, while `codex -c allow_login_shell=false features list` fully loads configuration and exits 0. `rook eval doctor` now validates the full immutable EvalOps config the same way. | Require a fresh, separately authorized two-call readiness on the same `holdout-docs` pair. | Offline only; no model call and no readiness claim. |
 | Adapter v11 smoke | Both processes exited 0 on the prior `holdout-docs` failure boundary, each emitted one terminal turn, and trace completeness was 100%. Profile, Web Search, reconnect, WebSocket, sandbox-failure, and infrastructure-exclusion markers were all zero. | Profile isolation is ready for a fresh Formal authorization. | Readiness passed; one pair remains below the effect-policy sample size and is not a Formal result. |
+| Adapter v11 Formal | A separately authorized fresh run completed 72/72 processes and 36/36 pairs. All processes exited 0, trace completeness was 100%, and infrastructure exclusions plus profile, Web Search, reconnect, WebSocket, sandbox, safety, secret, and isolation markers were zero. | No further transport or execution remediation is required for this evidence boundary. | Gate promoted on capability success uplift; measurement-only, so no approval or deployment occurred. |
 
 ## Evidence index
 
@@ -46,12 +47,12 @@ effect estimate.
 - [Adapter v10 smoke attempt](../evidence/rm2-v10-smoke-attempt-2026-07-26.json)
 - [Adapter v11 profile isolation remediation](../evidence/rm2-formal-v10-profile-isolation-remediation-2026-07-26.json)
 - [Adapter v11 smoke](../evidence/rm2-v11-smoke-2026-07-26.json)
+- [Adapter v11 Formal](../evidence/rm2-formal-v11-summary-2026-07-26.json)
 
 ## Current boundary
 
-Adapter v11 passed a fresh two-call live readiness gate on the prior
-PowerShell-profile failure boundary. The Adapter v10 authorization remains an
-aborted record and was not resumed as a one-call remainder. The valid 24-call
-Pilot and Adapter v11 readiness remain engineering evidence, but final resume
-success-rate, latency, and Token claims remain unfilled until a separately
-authorized, fresh 72-call Formal completes without an infrastructure exclusion.
+Adapter v11 passed a fresh readiness gate and then completed a separately
+authorized 72-call Formal from call 1. The Formal report is resume-eligible for
+success, latency, and observed Token claims. USD cost and Codex routing remain
+not observed. The measurement-only gate did not create approval or deployment
+state.
