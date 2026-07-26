@@ -167,7 +167,7 @@ def test_public_v9_formal_attempt_stopped_fail_closed_and_is_not_formal() -> Non
     assert evidence["result"]["resume_metric_produced"] is False
 
 
-def test_public_v10_profile_remediation_is_offline_and_requires_new_smoke() -> None:
+def test_public_v10_profile_remediation_records_invalidated_validation() -> None:
     evidence = json.loads(
         (
             _ROOT
@@ -181,12 +181,59 @@ def test_public_v10_profile_remediation_is_offline_and_requires_new_smoke() -> N
     assert evidence["contract"]["codex_config_override"] == (
         "permissions.allow_login_shell=false"
     )
-    assert evidence["contract"]["powershell_non_login_flag"] == "-NoProfile"
-    assert evidence["contract"]["user_profile_files_modified"] is False
+    assert evidence["verification"]["config_was_fully_loaded"] is False
     assert evidence["verification"]["external_calls"] == 0
     assert evidence["verification"]["model_costs_incurred"] is False
+    assert evidence["result"]["invalidated_by_live_config_parse"] is True
+
+
+def test_public_v10_smoke_attempt_stopped_before_model_and_second_arm() -> None:
+    evidence = json.loads(
+        (
+            _ROOT
+            / "docs"
+            / "evidence"
+            / "rm2-v10-smoke-attempt-2026-07-26.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert evidence["authorization"]["external_cli_processes_authorized"] == 2
+    assert evidence["authorization"]["external_cli_processes_started"] == 1
+    assert evidence["authorization"]["model_requests_started"] == 0
+    assert evidence["authorization"]["second_arm_started"] is False
+    assert evidence["execution"]["planned_run_count"] == 2
+    assert evidence["execution"]["completed_run_count"] == 1
+    assert evidence["execution"]["stop_reason"] == "infrastructure_exclusion"
+    assert evidence["failure"]["classification"] == "invalid_codex_config_path"
+    assert evidence["failure"]["jsonl_bytes"] == 0
+    assert evidence["stop_boundary"]["status"] == "aborted_fail_closed"
+    assert evidence["result"]["readiness_passed"] is False
+    assert evidence["result"]["formal_metric_produced"] is False
+
+
+def test_public_v11_profile_remediation_is_offline_and_requires_fresh_smoke() -> None:
+    evidence = json.loads(
+        (
+            _ROOT
+            / "docs"
+            / "evidence"
+            / "rm2-formal-v10-profile-isolation-remediation-2026-07-26.json"
+        ).read_text(encoding="utf-8")
+    )
+
+    assert evidence["identity"]["adapter_version"] == "codex-evalops-v11"
+    assert evidence["contract"]["codex_config_override"] == "allow_login_shell=false"
+    assert evidence["contract"]["powershell_non_login_flag"] == "-NoProfile"
+    assert evidence["contract"]["user_profile_files_modified"] is False
+    assert evidence["verification"]["config_validation_exit_code"] == 0
+    assert evidence["verification"]["wrong_nested_path_exit_code"] == 1
+    assert evidence["verification"]["external_calls"] == 0
+    assert evidence["verification"]["model_costs_incurred"] is False
+    assert evidence["verification"]["rook_eval_doctor_available"] is True
+    assert evidence["verification"]["rook_eval_doctor_validates_full_eval_config"] is True
     assert evidence["next_gate"]["calls"] == 2
     assert evidence["next_gate"]["authorization_required"] is True
+    assert evidence["next_gate"]["must_start_from_zero"] is True
     assert evidence["next_gate"]["formal_authorized"] is False
 
 

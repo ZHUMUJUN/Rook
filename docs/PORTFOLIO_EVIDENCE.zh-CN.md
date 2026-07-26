@@ -35,8 +35,10 @@
 | Adapter v9 写入后验证修复 | 必需写入与辅助验证分离；确定性 evaluator 保留最终判定权；105 个专项离线测试通过 |
 | Adapter v9 readiness smoke | 之前失败的 application case 上 2/2 次终态 turn；轨迹完整度 100%；基础设施排除 0；readiness 通过 |
 | Adapter v9 Formal 已中止 | 启动 39 次；第 39 次加载真实 PowerShell profile 后在受限 language mode 失败；fail-fast 在第 40 次前停止；部分 ScoreCard 不作为 Formal |
-| Adapter v10 profile 隔离 | 强制 `permissions.allow_login_shell=false`，Codex PowerShell 使用 `-NoProfile` 且拒绝显式 login shell；零模型调用离线验证通过 |
-| 剩余真实调用计划 | 单独授权 Adapter v10 的 2-call readiness；通过后再单独授权全新的 72-call Formal |
+| Adapter v10 离线验证失效 | `codex --version` 未完整加载配置；错误的 `permissions.allow_login_shell=false` 不能作为 profile 隔离证据 |
+| Adapter v10 readiness 已中止 | 第一臂在 1 秒内因配置解析失败而 fail-fast；JSONL 为空、模型请求 0、第二臂未启动；没有 readiness 或 Formal 结果 |
+| Adapter v11 profile 隔离 | 改用顶层 `allow_login_shell=false`；无模型的完整配置加载验证成功，错误嵌套键对照失败 |
+| 剩余真实调用计划 | 全新授权 Adapter v11 的 2-call readiness；通过后再单独授权从零开始的 72-call Formal |
 | 控制实验外部调用 | 0 |
 
 复现控制实验：

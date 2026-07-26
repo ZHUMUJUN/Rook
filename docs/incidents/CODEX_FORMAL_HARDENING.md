@@ -19,8 +19,10 @@ effect estimate.
 | Adapter v8 smoke | Exactly 2/2 calls completed, with no infrastructure exclusion or deadline-overrun marker. | Host deadline boundary considered ready. | Readiness only. |
 | Adapter v8 Formal | One Forced arm wrote the required file, then an auxiliary assertion failed and was classified as fallback exhaustion. Thirteen calls started; 59 were not started. | Adapter v9 separates required mutation from auxiliary verification; a completed write reaches the hidden deterministic evaluator. | Stopped; no Formal metric. |
 | Adapter v9 smoke | The previously failing application case completed exactly 2/2 terminal calls, with 100% trace completeness and zero infrastructure exclusions. | No further Adapter change required by readiness. | Readiness passed; one pair remains below effect-policy sample size. |
-| Adapter v9 Formal | The first 38 calls formed 19 complete pairs. Call 39 loaded the real PowerShell profile inside the restricted Windows sandbox; the profile failed under its language mode and the process exited without an admissible terminal result. | Adapter v10 sets `permissions.allow_login_shell=false`, which makes Codex invoke PowerShell with `-NoProfile` and reject explicit login-shell requests. | Fail-fast stopped before call 40; 33 calls were not started; the partial ScoreCard is not a Formal metric. |
-| Adapter v10 offline remediation | Codex 0.144.6 accepted the login-shell override, and focused Adapter/CLI/Runner tests verified the immutable command and new target identity. | Require a separately authorized two-call readiness on the previously failing `holdout-docs` pair. | Offline only; no model call and no readiness claim. |
+| Adapter v9 Formal | The first 38 calls formed 19 complete pairs. Call 39 loaded the real PowerShell profile inside the restricted Windows sandbox; the profile failed under its language mode and the process exited without an admissible terminal result. | Add an explicit no-login-shell Codex configuration boundary. | Fail-fast stopped before call 40; 33 calls were not started; the partial ScoreCard is not a Formal metric. |
+| Adapter v10 offline remediation | `codex --version` accepted `permissions.allow_login_shell=false`, but that command did not fully deserialize configuration. | Full configuration loading must be part of offline validation. | Invalidated by the live readiness parse failure; no readiness claim. |
+| Adapter v10 smoke | The Baseline CLI process rejected the nested override before provider initialization; its JSONL was empty and no model request started. | Adapter v11 uses the top-level `allow_login_shell=false` field accepted by Codex 0.144.6. | Fail-fast stopped after 1/2 planned arms; the Forced arm was not started; no readiness or Formal metric. |
+| Adapter v11 offline remediation | The invalid nested path fails `features list`, while `codex -c allow_login_shell=false features list` fully loads configuration and exits 0. `rook eval doctor` now validates the full immutable EvalOps config the same way. | Require a fresh, separately authorized two-call readiness on the same `holdout-docs` pair. | Offline only; no model call and no readiness claim. |
 
 ## Evidence index
 
@@ -39,12 +41,16 @@ effect estimate.
 - [Post-write remediation](../evidence/rm2-formal-v8-post-write-remediation-2026-07-22.json)
 - [Adapter v9 smoke](../evidence/rm2-v9-smoke-2026-07-24.json)
 - [Adapter v9 Formal attempt](../evidence/rm2-formal-v9-attempt-2026-07-24.json)
-- [PowerShell profile isolation remediation](../evidence/rm2-formal-v9-profile-isolation-remediation-2026-07-26.json)
+- [Invalidated Adapter v10 profile remediation](../evidence/rm2-formal-v9-profile-isolation-remediation-2026-07-26.json)
+- [Adapter v10 smoke attempt](../evidence/rm2-v10-smoke-attempt-2026-07-26.json)
+- [Adapter v11 profile isolation remediation](../evidence/rm2-formal-v10-profile-isolation-remediation-2026-07-26.json)
 
 ## Current boundary
 
-Adapter v10 has an offline-verified PowerShell profile-isolation boundary but
-has not passed its two-call live readiness gate. The valid 24-call Pilot remains
-useful engineering evidence, but final resume success-rate, latency, and Token
-claims remain unfilled until a separately authorized readiness and a separate,
+Adapter v11 has a fully parsed, offline-verified PowerShell profile-isolation
+boundary but has not passed a two-call live readiness gate. The Adapter v10
+authorization stopped fail-closed before a model request and cannot be resumed
+as a one-call remainder. The valid 24-call Pilot remains useful engineering
+evidence, but final resume success-rate, latency, and Token claims remain
+unfilled until a fresh, separately authorized readiness and a separate,
 fresh 72-call Formal both complete without an infrastructure exclusion.

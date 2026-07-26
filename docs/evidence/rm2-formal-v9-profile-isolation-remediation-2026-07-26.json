@@ -19,6 +19,8 @@
   },
   "verification": {
     "codex_cli_config_parse_exit_code": 0,
+    "config_validation_command": "codex --version",
+    "config_was_fully_loaded": false,
     "codex_cli_version": "codex-cli 0.144.6",
     "external_calls": 0,
     "model_costs_incurred": false,
@@ -27,11 +29,9 @@
       "skipped": 0
     }
   },
-  "next_gate": {
-    "authorization_required": true,
-    "calls": 2,
-    "formal_authorized": false,
-    "kind": "adapter_v10_readiness_smoke",
-    "model": "gpt-5.4-mini"
+  "result": {
+    "invalidated_by_live_config_parse": true,
+    "reason": "The --version path did not fully deserialize config.toml overrides. Adapter v10 failed closed before a model request because permissions.allow_login_shell was not a valid Codex CLI config path.",
+    "superseded_by": "rm2-formal-v10-profile-isolation-remediation-2026-07-26.json"
   }
 }

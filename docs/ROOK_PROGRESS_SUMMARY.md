@@ -17,7 +17,7 @@ Rook 是一个可真实运行的本地 Python Coding Agent；Rook Forge 是内�
 - 分支：`main`
 - 工作树：`D:/WorkAndStudy/FindJob/New-Harness-Agent/Rook`
 - Rook Forge v0.2.2 已发布；Adapter v9 suite 基线为 `94e866a`，作品集与证据 PR #9 合并提交为 `8e56e14`。
-- 当前状态：Adapter v9 Formal 在第 39/72 次首次出现 PowerShell profile 隔离失败，fail-fast 在第 40 次前停止，部分 ScoreCard 不具备 Formal 资格；Adapter v10 已通过 `permissions.allow_login_shell=false` 强制非 login shell，并完成零模型调用的专项离线验证，等待单独授权的 2-call readiness。
+- 当前状态：Adapter v9 Formal 在第 39/72 次首次出现 PowerShell profile 隔离失败，fail-fast 在第 40 次前停止，部分 ScoreCard 不具备 Formal 资格；Adapter v10 readiness 的第一臂在模型请求前因错误的嵌套配置键失败，第二臂未启动。Adapter v11 已改用 Codex 0.144.6 接受的顶层 `allow_login_shell=false`，并通过完整配置加载的零模型调用验证，等待全新授权的 2-call readiness。
 
 ## 已完成功能
 

@@ -46,7 +46,11 @@ and trace-derived quarantined candidates.
 | Aborted Adapter v8 Formal | 13 calls started; one Forced arm exhausted fallback after a post-write assertion; 59 calls not started; no Formal result |
 | Adapter v9 post-write remediation | Mutation and auxiliary verification separated; deterministic evaluator retains authority; 105 focused offline tests passed |
 | Adapter v9 readiness smoke | 2/2 terminal turns on the previously failing application case; 100% trace completeness; 0 infrastructure exclusions; readiness passed |
-| Remaining live schedule | A separately authorized fresh 72-call Formal |
+| Aborted Adapter v9 Formal | 39 calls started; the real PowerShell profile loaded in a restricted sandbox; fail-fast stopped before call 40; 33 calls not started; no Formal result |
+| Invalidated Adapter v10 remediation | `codex --version` did not fully load configuration; the nested login-shell override was not admissible evidence |
+| Aborted Adapter v10 readiness | Baseline failed config parsing before provider initialization; empty JSONL, 0 model requests, Forced arm not started |
+| Adapter v11 profile isolation | Top-level `allow_login_shell=false`; full no-model config load passes while the invalid nested-path control fails |
+| Remaining live schedule | A fresh, separately authorized Adapter v11 two-call readiness, then a separately authorized fresh 72-call Formal |
 | External calls in the control | None |
 
 Reproduce the control evidence:

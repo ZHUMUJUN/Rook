@@ -471,8 +471,23 @@ sandbox-failure counts were all zero. Baseline failed the hidden evaluator with
 `quarantined (insufficient_valid_pairs)`, because readiness is not an effect
 study. The redacted record is
 [`rm2-v9-smoke-2026-07-24.json`](evidence/rm2-v9-smoke-2026-07-24.json).
-A new 72-call Formal still requires its own explicit external-call and
-model-cost authorization.
+The following Adapter v9 Formal stopped fail-closed after 39/72 calls when the
+real PowerShell profile loaded inside the restricted Windows sandbox. Adapter
+v10 attempted to disable login shells with an invalid nested Codex config key;
+its readiness Baseline failed config parsing before provider initialization,
+produced an empty JSONL file, and stopped before the Forced arm. Adapter v11
+uses the Codex 0.144.6 top-level field `allow_login_shell=false`. Unlike the
+invalidated `--version` probe, the offline verification fully loads
+configuration via `features list`; the valid key exits 0 and the invalid nested
+control exits 1. `rook eval doctor` now performs the same full immutable-config
+validation before reporting Codex available. Evidence is recorded in
+[`rm2-v10-smoke-attempt-2026-07-26.json`](evidence/rm2-v10-smoke-attempt-2026-07-26.json)
+and
+[`rm2-formal-v10-profile-isolation-remediation-2026-07-26.json`](evidence/rm2-formal-v10-profile-isolation-remediation-2026-07-26.json).
+
+Adapter v11 now requires a fresh, separately authorized two-call readiness on
+`profile-isolation-smoke.toml`. Passing it still does not authorize Formal. A
+new 72-call Formal must be authorized separately and start from call 1.
 
 Calibration, Pilot, and Formal stages require separate authorizations for 12,
 24, and 72 calls. Do not infer one stage's authorization from another. Only the
